@@ -1,37 +1,29 @@
-package conf
+package goredis
 
 import (
-	"io/ioutil"
 	"sync"
 
 	"github.com/xf005/logger"
 	"gopkg.in/yaml.v3"
+	"io/ioutil"
 )
 
 type Conf struct {
-	Server Server `yaml:"server"`
-	Redis  Redis  `yaml:"redis"`
-}
-
-type Server struct {
-	Port string `yaml:"port"`
-}
-
-type Redis struct {
-	Host string `yaml:"host"`
-	User string
-	Pass string
-	Db   int
+	Redis struct {
+		Addr string
+		Pass string
+		Db   int
+	}
 }
 
 var (
-	once sync.Once
-	conf *Conf
+	syncOnce sync.Once
+	conf     *Conf
 )
 
 func NewConf() *Conf {
-	once.Do(func() {
-		logger.Info("conf init...")
+	syncOnce.Do(func() {
+		logger.Info("redis init...")
 		file, err := ioutil.ReadFile("./conf.yml")
 		if err != nil {
 			logger.Error(err.Error())

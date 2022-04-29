@@ -1,15 +1,15 @@
-package cache
+package goredis
 
 import (
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/go-redis/redis/v8"
 	"sort"
 	"strings"
 	"time"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/xf005/logger"
 )
 

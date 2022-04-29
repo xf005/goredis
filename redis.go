@@ -1,4 +1,4 @@
-package cache
+package goredis
 
 import (
 	"context"
@@ -7,7 +7,6 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	"github.com/xf005/logger"
-	"github.com/xf005/user/conf"
 )
 
 var (
@@ -17,9 +16,10 @@ var (
 
 func NewClient() *redis.Client {
 	once.Do(func() {
-		conf := conf.NewConf()
+		conf := NewConf()
+		logger.Info(conf)
 		client = redis.NewClient(&redis.Options{
-			Addr:        conf.Redis.Host,
+			Addr:        conf.Redis.Addr,
 			Password:    conf.Redis.Pass,
 			DB:          conf.Redis.Db,
 			PoolSize:    5,                // 连接池大小

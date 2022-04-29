@@ -1,12 +1,4 @@
-server:
-  port: 10080
-
-database:
-  db:
-    dsn: root:@tcp(127.0.0.1:3306)/lingtaoke
-    debug: true
-
 redis:
-  host: 127.0.0.1:6379
+  addr: 127.0.0.1:6379
   pass: 123!abc@081
-  db: 10
+  db: 0
