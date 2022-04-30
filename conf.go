@@ -10,7 +10,7 @@ import (
 
 type Conf struct {
 	Redis struct {
-		Addr string
+		Host string
 		Pass string
 		Db   int
 	}

@@ -19,7 +19,7 @@ func NewClient() *redis.Client {
 		conf := NewConf()
 		logger.Info(conf)
 		client = redis.NewClient(&redis.Options{
-			Addr:        conf.Redis.Addr,
+			Addr:        conf.Redis.Host,
 			Password:    conf.Redis.Pass,
 			DB:          conf.Redis.Db,
 			PoolSize:    5,                // 连接池大小
