@@ -3,7 +3,6 @@ package goredis
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -14,7 +13,7 @@ import (
 )
 
 var (
-	rdb              = NewClient()
+	// rdb           = NewClient()
 	UserInfoCacheKey = "user:info"
 )
 
@@ -65,7 +64,7 @@ func (c *Cache) Set(ctx context.Context, key string, val interface{}) error {
 		return err
 	}
 	key = c.buildKey(key)
-	err = rdb.Set(ctx, key, string(bytes), time.Duration(c.expired)*time.Second).Err()
+	err = c.pool.Set(ctx, key, string(bytes), time.Duration(c.expired)*time.Second).Err()
 	if err != nil {
 		logger.Error("set key [%s] err:%s", key, err.Error())
 		return err
@@ -81,7 +80,7 @@ func (c *Cache) SetExtend(ctx context.Context, key string, val interface{}, expi
 		return err
 	}
 	key = c.buildKey(key)
-	err = rdb.Set(ctx, key, string(bytes), time.Duration(expired)*time.Second).Err()
+	err = c.pool.Set(ctx, key, string(bytes), time.Duration(expired)*time.Second).Err()
 	if err != nil {
 		logger.Error("set key [%s] err:%s", key, err.Error())
 		return err
@@ -92,7 +91,7 @@ func (c *Cache) SetExtend(ctx context.Context, key string, val interface{}, expi
 // Get 获取
 func (c *Cache) Get(ctx context.Context, key string, v interface{}) error {
 	key = c.buildKey(key)
-	vb, err := rdb.Get(ctx, key).Bytes()
+	vb, err := c.pool.Get(ctx, key).Bytes()
 	if err != nil {
 		logger.Error("get key[%s] err:%s", key, err.Error())
 		return err
@@ -134,12 +133,9 @@ func (c *Cache) List(ctx context.Context, value interface{}) error {
 	return err
 }
 
+/*
 func NewClientPipeline() redis.Pipeliner {
 	return rdb.Pipeline()
-}
-
-func BindKey(baseKey, key string) string {
-	return fmt.Sprintf("%s:%s", baseKey, key)
 }
 
 // Set 设置
@@ -222,3 +218,4 @@ func Publist(ctx context.Context, channel string, data interface{}) error {
 	}
 	return nil
 }
+*/
