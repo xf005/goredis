@@ -3,6 +3,7 @@ package goredis
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -13,7 +14,7 @@ import (
 )
 
 var (
-	// rdb           = NewClient()
+	rdb              = NewClient()
 	UserInfoCacheKey = "user:info"
 )
 
@@ -133,7 +134,6 @@ func (c *Cache) List(ctx context.Context, value interface{}) error {
 	return err
 }
 
-/*
 func NewClientPipeline() redis.Pipeliner {
 	return rdb.Pipeline()
 }
@@ -218,4 +218,3 @@ func Publist(ctx context.Context, channel string, data interface{}) error {
 	}
 	return nil
 }
-*/
