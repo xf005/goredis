@@ -59,13 +59,6 @@ func (c *Cache) Exist(ctx context.Context, key string) bool {
 
 // Set 设置
 func (c *Cache) Set(ctx context.Context, key string, val interface{}) error {
-	//vb, err := Encode(val)
-	// 序列化存储
-	/*
-		var buffer bytes.Buffer
-		enc := gob.NewEncoder(&buffer)
-		err := enc.Encode(&val)
-	*/
 	bytes, err := json.Marshal(val)
 	if err != nil {
 		logger.Error("codec before setting. err:", err.Error())
@@ -73,6 +66,22 @@ func (c *Cache) Set(ctx context.Context, key string, val interface{}) error {
 	}
 	key = c.buildKey(key)
 	err = rdb.Set(ctx, key, string(bytes), time.Duration(c.expired)*time.Second).Err()
+	if err != nil {
+		logger.Error("set key [%s] err:%s", key, err.Error())
+		return err
+	}
+	return nil
+}
+
+// SetExtend 设置扩展
+func (c *Cache) SetExtend(ctx context.Context, key string, val interface{}, expired int64) error {
+	bytes, err := json.Marshal(val)
+	if err != nil {
+		logger.Error("codec before setting. err:", err.Error())
+		return err
+	}
+	key = c.buildKey(key)
+	err = rdb.Set(ctx, key, string(bytes), time.Duration(expired)*time.Second).Err()
 	if err != nil {
 		logger.Error("set key [%s] err:%s", key, err.Error())
 		return err
@@ -88,13 +97,8 @@ func (c *Cache) Get(ctx context.Context, key string, v interface{}) error {
 		logger.Error("get key[%s] err:%s", key, err.Error())
 		return err
 	}
-	//err = Decode(vb, v)
 	// 反序列化获取
 	err = json.Unmarshal(vb, &v)
-	/*
-		dec := gob.NewDecoder(bytes.NewReader(vb))
-		err = dec.Decode(&v)
-	*/
 	if err != nil {
 		logger.Error(err.Error())
 	}
@@ -140,13 +144,6 @@ func BindKey(baseKey, key string) string {
 
 // Set 设置
 func Set(ctx context.Context, key string, val interface{}, expired int) error {
-	//vb, err := Encode(val)
-	// 序列化存储
-	/*
-		var buffer bytes.Buffer
-		enc := gob.NewEncoder(&buffer)
-		err := enc.Encode(&val)
-	*/
 	bytes, err := json.Marshal(val)
 	if err != nil {
 		logger.Error("codec before setting. err:", err.Error())
@@ -167,13 +164,8 @@ func Get(ctx context.Context, key string, v interface{}) error {
 		logger.Error("get key[%s] err:%s", key, err.Error())
 		return err
 	}
-	//err = Decode(vb, v)
 	// 反序列化获取
 	err = json.Unmarshal(vb, &v)
-	/*
-		dec := gob.NewDecoder(bytes.NewReader(vb))
-		err = dec.Decode(&v)
-	*/
 	if err != nil {
 		logger.Error(err.Error())
 	}
